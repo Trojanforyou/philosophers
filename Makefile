@@ -1,18 +1,17 @@
 NAME = philo
 
-cc = gcc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror -I.
 
 HEADER = philo.h
 
-SRCS = src/main.c src/parse.c
-
+SRCS = src/main.c src/parse.c src/utils.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	ar rcs $(NAME) $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -25,5 +24,4 @@ fclean: clean
 
 re: fclean all
 
-
-.PHONY: all clean re
+.PHONY: all clean fclean re
