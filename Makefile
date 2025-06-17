@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror -I.
 
 HEADER = philo.h
 
-SRCS = src/main.c src/parse.c src/utils.c
+SRCS = src/main.c src/parse.c src/utils.c src/threads.c src/time.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
