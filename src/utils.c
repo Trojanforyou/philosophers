@@ -20,3 +20,25 @@ int	ft_atoi(const char *nptr)
 	}
 	return (res);
 }
+void	*deadlock_case(void *args)
+{
+	t_data *data;
+
+	data = (t_data *)args;
+
+	if (data->id % 2 == 0)
+	{
+		pthread_mutex_lock(data->right_fork);
+		printf(YELLOW"Philosopher Has Taken A Right Fork\n"RESET);
+		printf(BLUE"Philpsopher Has Taken A Left Fork\n"RESET);
+		pthread_mutex_lock(data->left_fork);
+	}
+	else
+	{
+		pthread_mutex_lock(data->left_fork);
+		printf(BLUE"Philpsopher Has Taken A Left Fork\n"RESET);
+		pthread_mutex_lock(data->right_fork);
+		printf(YELLOW"Philosopher Has Taken A Right Fork\n"RESET);
+	}
+	return (0);
+}

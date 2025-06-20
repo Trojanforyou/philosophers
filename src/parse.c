@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 17:35:52 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/18 18:25:23 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:55:12 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ bool	philo_args(t_philo *info, int ac, char **av)
 		return(printf(RED"To Much Philos\n" RESET), false);
 	if (info->philo_nbr <= 0 ||info->die_time <= 0|| info->eat_time <= 0|| info->sleep_time <= 0)
 		return (false);
+	info->elimination = false;
 	if (ac == 6 && info->meal_limit <= 0)
 		return (false);
 	return (true);

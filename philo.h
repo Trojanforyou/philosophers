@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/18 18:32:49 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:54:52 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #define RED "\033[31m"
 #define GREEN "\033[32m"
 #define YELLOW "\033[33m"
-#define PURPLE "\033[35m" 
+#define PURPLE "\033[35m"
 #define PINK "\033[95m"
 #define ORANGE "\033[38;5;208m"
 #define BLUE "\33[34m"
@@ -40,6 +40,8 @@ typedef struct s_philo
 	long			sleep_time;
 	long			meal_limit;
 	long			start_time;
+	pthread_t		died;
+	bool 			elimination;
 	pthread_mutex_t	*forks;
 }	t_philo;
 
@@ -51,8 +53,9 @@ typedef struct s_data
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_t		thread;
-	pthread_mutex_t	*meal_mutex;
-	bool			died;
+	pthread_mutex_t	meal_mutex;
+	pthread_mutex_t died_mutex;
+	pthread_mutex_t last_meal_m;
 	long			start_time;
 	t_philo			*philo;
 }	t_data;
@@ -68,4 +71,6 @@ bool	malloc_fork(t_philo *info);
 bool	thread_init(t_data *data, t_philo *info);
 bool	malloc_all(t_philo *info, t_data **data);
 
+void	*deadlock_case(void *args);
 void	*routine(void	*args);
+void	*monitoring(void *args);
