@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/20 17:54:52 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:05:03 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ typedef struct s_philo
 	long			die_time;
 	long long		eat_time;
 	long			sleep_time;
+	bool 			elimination;
 	long			meal_limit;
 	long			start_time;
 	pthread_t		died;
-	bool 			elimination;
 	pthread_mutex_t	*forks;
 }	t_philo;
 
@@ -51,10 +51,10 @@ typedef struct s_data
 	long			meals_eaten;
 	long long		last_meal;
 	pthread_mutex_t	*left_fork;
+	pthread_mutex_t died_mutex;
 	pthread_mutex_t	*right_fork;
 	pthread_t		thread;
 	pthread_mutex_t	meal_mutex;
-	pthread_mutex_t died_mutex;
 	pthread_mutex_t last_meal_m;
 	long			start_time;
 	t_philo			*philo;
@@ -63,6 +63,7 @@ typedef struct s_data
 
 int		parse(int ac, char **av);
 int		ft_atoi(const char *nptr);
+int		philo_malloc(t_data **data, t_philo *info);
 
 long long	set_time(void);
 
@@ -70,7 +71,10 @@ bool	philo_args(t_philo *info, int ac, char **av);
 bool	malloc_fork(t_philo *info);
 bool	thread_init(t_data *data, t_philo *info);
 bool	malloc_all(t_philo *info, t_data **data);
+bool 	is_simulation_running(t_data *data);
 
 void	*deadlock_case(void *args);
 void	*routine(void	*args);
 void	*monitoring(void *args);
+void	print_msg(t_data *data, char *msg);
+void 	destroy_all(t_data *data, t_philo *info);

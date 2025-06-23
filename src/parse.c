@@ -6,12 +6,13 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 17:35:52 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/20 17:55:12 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:06:05 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
+// парсинг входных значений начальная проверка на валидность 
 int	parse(int ac, char **av)
 {
 	int	i;
@@ -29,16 +30,14 @@ int	parse(int ac, char **av)
 		while (av[i][j])
 		{
 			if (av[i][j] == '-' || av[i][j] < '0' || av[i][j] > '9' || av[i][j] == ' ')
-			{
-				printf(RED"Argument Type Is Incorrect\n"RESET);
-				return (0);
-			}
+				return (printf(RED"Argument Type Is Incorrect\n"RESET), 0);
 			j++;
 		}
 		i++;
 	}
 	return (1);
 }
+// назначение аргументов проверка на валидность задаваемых аргументов 
 bool	philo_args(t_philo *info, int ac, char **av)
 {
 	if (!parse(ac, av))
@@ -62,6 +61,7 @@ bool	philo_args(t_philo *info, int ac, char **av)
 		return (false);
 	return (true);
 }
+// выделение памяти для основной структуры (t_data) для всех фило.
 int	philo_malloc(t_data **data, t_philo *info)
 {
 	*data = malloc(sizeof(t_data) * info->philo_nbr);
@@ -69,6 +69,7 @@ int	philo_malloc(t_data **data, t_philo *info)
 		return (0);
 	return (1);
 }
+// Выделение памяти для Вилок (Мьютексов) и их инициализация
 bool	malloc_fork(t_philo *info)
 {
 	int	i;
@@ -86,12 +87,12 @@ bool	malloc_fork(t_philo *info)
 	}
 	return (true);
 }
-
+//  Функция для обьядинения 2 х функций вместе
 bool	malloc_all(t_philo *info, t_data **data)
 {
 	if (!malloc_fork(info))
 		return (false);
 	if (!philo_malloc(data, info))
-		return (false);
+		return (free(info->forks), false);
 	return (true);
 }
