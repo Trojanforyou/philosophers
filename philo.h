@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/23 20:05:03 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/24 20:23:17 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ typedef struct s_philo
 	bool 			elimination;
 	long			meal_limit;
 	long			start_time;
+	pthread_mutex_t	meal_mutex;
+	pthread_mutex_t died_mutex;
 	pthread_t		died;
 	pthread_mutex_t	*forks;
 }	t_philo;
@@ -51,10 +53,8 @@ typedef struct s_data
 	long			meals_eaten;
 	long long		last_meal;
 	pthread_mutex_t	*left_fork;
-	pthread_mutex_t died_mutex;
 	pthread_mutex_t	*right_fork;
 	pthread_t		thread;
-	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t last_meal_m;
 	long			start_time;
 	t_philo			*philo;
@@ -72,6 +72,7 @@ bool	malloc_fork(t_philo *info);
 bool	thread_init(t_data *data, t_philo *info);
 bool	malloc_all(t_philo *info, t_data **data);
 bool 	is_simulation_running(t_data *data);
+void	*eat_limit(void	*args);
 
 void	*deadlock_case(void *args);
 void	*routine(void	*args);

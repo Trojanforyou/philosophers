@@ -6,13 +6,13 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 17:35:52 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/23 20:06:05 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:24:15 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-// парсинг входных значений начальная проверка на валидность 
+// парсинг входных значений начальная проверка на валидность
 int	parse(int ac, char **av)
 {
 	int	i;
@@ -37,7 +37,7 @@ int	parse(int ac, char **av)
 	}
 	return (1);
 }
-// назначение аргументов проверка на валидность задаваемых аргументов 
+// назначение аргументов проверка на валидность задаваемых аргументов
 bool	philo_args(t_philo *info, int ac, char **av)
 {
 	if (!parse(ac, av))
@@ -49,14 +49,16 @@ bool	philo_args(t_philo *info, int ac, char **av)
 	if (ac == 6)
 		info->meal_limit = ft_atoi(av[5]);
 	else if (ac == 5)
-	{
 		info->meal_limit = -1;
-	}
-	if (info->philo_nbr >= 200)
+	if (info->philo_nbr > 200)
 		return(printf(RED"To Much Philos\n" RESET), false);
 	if (info->philo_nbr <= 0 ||info->die_time <= 0|| info->eat_time <= 0|| info->sleep_time <= 0)
 		return (false);
 	info->elimination = false;
+	if (pthread_mutex_init(&info->died_mutex, NULL))
+		return (false);
+	if (pthread_mutex_init(&info->meal_mutex, NULL))
+		return (false);
 	if (ac == 6 && info->meal_limit <= 0)
 		return (false);
 	return (true);
@@ -93,6 +95,6 @@ bool	malloc_all(t_philo *info, t_data **data)
 	if (!malloc_fork(info))
 		return (false);
 	if (!philo_malloc(data, info))
-		return (free(info->forks), false);
+		return (false);
 	return (true);
 }
