@@ -30,25 +30,20 @@ void	*deadlock_case(void *args)
 	if (data->id % 2 == 0)
 	{
 		pthread_mutex_lock(data->right_fork);
-		// if (!is_simulation_running(data))
-		// 	return (NULL);
 		print_msg(data,"has taken a fork\n");
 		pthread_mutex_lock(data->left_fork);
-		// if (!is_simulation_running(data))
-		// 	return (NULL);
 		print_msg(data,"has taken a fork\n");
 	}
 	else
 	{
 		pthread_mutex_lock(data->left_fork);
-		// if (!is_simulation_running(data))
-		// 	return (NULL);
 		print_msg(data,"has taken a fork\n");
 		pthread_mutex_lock(data->right_fork);
-		// if (!is_simulation_running(data))
-		// 	return (NULL);
 		print_msg(data,"has taken a fork\n");
 	}
+	pthread_mutex_lock(&data->last_meal_m);
+	data->last_meal = set_time();
+	pthread_mutex_unlock(&data->last_meal_m);
 	return (0);
 }
 
@@ -63,10 +58,8 @@ bool is_simulation_running(t_data *data)
 
 void	print_msg(t_data *data, char *msg)
 {
-	pthread_mutex_lock(&data->philo->died_mutex);
-	if (!data->philo->elimination)
+	if (is_simulation_running(data))
 		printf("%lld %d %s", set_time() - data->philo->start_time, data->id + 1, msg);
-	pthread_mutex_unlock(&data->philo->died_mutex);
 }
 
 void destroy_all(t_data *data, t_philo *info)

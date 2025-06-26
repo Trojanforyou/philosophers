@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/24 20:23:17 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/26 17:24:54 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_philo
 	bool 			elimination;
 	long			meal_limit;
 	long			start_time;
+	pthread_t		meal_limit_t;
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t died_mutex;
 	pthread_t		died;
@@ -50,6 +51,7 @@ typedef struct s_philo
 typedef struct s_data
 {
 	int				id;
+	bool			is_full;
 	long			meals_eaten;
 	long long		last_meal;
 	pthread_mutex_t	*left_fork;
