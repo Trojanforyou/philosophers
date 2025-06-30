@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:04:14 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/26 18:38:00 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/30 18:50:37 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 void	*monitoring(void *args)
 {
 	t_data	*data;
+	int		i;
+
 	data = (t_data *)args;
-	int	i;
 	while (1)
 	{
 		i = -1;
@@ -29,16 +30,18 @@ void	*monitoring(void *args)
 				pthread_mutex_lock(&data->philo->died_mutex);
 				data->philo->elimination = true;
 				pthread_mutex_unlock(&data->philo->died_mutex);
-				printf("%lld %s", set_time() - data->philo->start_time, "has died\n");
-				return (0);
+				printf("%lld %d has died\n", set_time() - data->philo->start_time, data[i].id + 1);
+				return (NULL);
 			}
-			else
-				pthread_mutex_unlock(&data[i].last_meal_m);
+			pthread_mutex_unlock(&data[i].last_meal_m);
+			if (!eat_limit(data))
+				return (0);
 		}
 		usleep(1000);
 	}
-	return (0);
 }
+
+
 // Основной цикл рутины.
 void	*routine(void *args)
 {
@@ -49,11 +52,13 @@ void	*routine(void *args)
 	{
 		print_msg(data,"is thinking\n");
 		if (data->philo->philo_nbr % 2 == 1)
-			usleep(1500);
+			usleep(700);
 		deadlock_case(data);
 		print_msg(data,"is eating\n");
 		usleep(data->philo->eat_time * 1000);
+		pthread_mutex_lock(&data->philo->meal_mutex);
 		data->meals_eaten++;
+		pthread_mutex_unlock(&data->philo->meal_mutex);
 		pthread_mutex_unlock(data->left_fork);
 		pthread_mutex_unlock(data->right_fork);
 		print_msg(data,"is sleeping\n");
@@ -86,7 +91,34 @@ bool	thread_init(t_data *data, t_philo *info)
 	}
 	if (pthread_create(&info->died, NULL, monitoring, data) != 0)
 		return (false);
-	if (pthread_create(&info->meal_limit_t, NULL, eat_limit, data) != 0)
+	return (true);
+}
+
+bool eat_limit(t_data *data)
+{
+	int counter;
+	int	i;
+	
+	counter = 1;
+	i = -1;
+	while (++i < data->philo->philo_nbr)
+	{
+		pthread_mutex_lock(&data->philo->meal_mutex);
+		if (data[i].meals_eaten >= data->philo->meal_limit)
+		{
+			counter++;	
+			pthread_mutex_unlock(&data->philo->meal_mutex);
+		}
+		else
+			pthread_mutex_unlock(&data->philo->meal_mutex);
+	}
+	if (counter >= data->philo->philo_nbr && data->philo->meal_limit != -1)
+	{
+		pthread_mutex_lock(&data->philo->died_mutex);
+		data->philo->elimination = true;
+		pthread_mutex_unlock(&data->philo->died_mutex);
+		printf("eat limit\n");
 		return (false);
+	}
 	return (true);
 }

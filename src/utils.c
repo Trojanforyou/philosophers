@@ -74,9 +74,9 @@ void destroy_all(t_data *data, t_philo *info)
 		}
 		free(info->forks);
 	}
-	if (&info->died_mutex)
-		pthread_mutex_destroy(&info->died_mutex);
-	if (&data->last_meal_m)
-		pthread_mutex_destroy(&data->last_meal_m);
+	// if (&info->died_mutex)
+	// 	pthread_mutex_destroy(&info->died_mutex);
+	// if (&data->last_meal_m)
+	// 	pthread_mutex_destroy(&data->last_meal_m);
 	free(data);
 }

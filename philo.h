@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/26 17:24:54 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:35:27 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ bool	malloc_fork(t_philo *info);
 bool	thread_init(t_data *data, t_philo *info);
 bool	malloc_all(t_philo *info, t_data **data);
 bool 	is_simulation_running(t_data *data);
-void	*eat_limit(void	*args);
+bool	eat_limit(t_data *data);
 
 void	*deadlock_case(void *args);
 void	*routine(void	*args);
