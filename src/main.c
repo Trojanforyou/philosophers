@@ -6,11 +6,11 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:18 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/30 18:49:06 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/01 16:10:37 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "philo.h"
 
 int main(int ac, char **av)
 {

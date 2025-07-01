@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:04:14 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/30 18:50:37 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/01 16:23:22 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	*monitoring(void *args)
 				pthread_mutex_lock(&data->philo->died_mutex);
 				data->philo->elimination = true;
 				pthread_mutex_unlock(&data->philo->died_mutex);
-				printf("%lld %d has died\n", set_time() - data->philo->start_time, data[i].id + 1);
+				printf("%lld has died\n", set_time() - data->philo->start_time);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data[i].last_meal_m);
@@ -46,13 +46,16 @@ void	*monitoring(void *args)
 void	*routine(void *args)
 {
 	t_data *data;
+
 	data = (t_data *)args;
-	usleep((data->id % 2) * (data->philo->eat_time * 100));
+	usleep((data->id % 2) * (data->philo->eat_time * 1000));
 	while (is_simulation_running(data))
 	{
 		print_msg(data,"is thinking\n");
+		if (data->philo->philo_nbr == 1 && is_simulation_running(data))
+			return (0);
 		if (data->philo->philo_nbr % 2 == 1)
-			usleep(700);
+			usleep(1000);
 		deadlock_case(data);
 		print_msg(data,"is eating\n");
 		usleep(data->philo->eat_time * 1000);
@@ -98,7 +101,7 @@ bool eat_limit(t_data *data)
 {
 	int counter;
 	int	i;
-	
+
 	counter = 1;
 	i = -1;
 	while (++i < data->philo->philo_nbr)
@@ -106,7 +109,7 @@ bool eat_limit(t_data *data)
 		pthread_mutex_lock(&data->philo->meal_mutex);
 		if (data[i].meals_eaten >= data->philo->meal_limit)
 		{
-			counter++;	
+			counter++;
 			pthread_mutex_unlock(&data->philo->meal_mutex);
 		}
 		else
@@ -119,6 +122,19 @@ bool eat_limit(t_data *data)
 		pthread_mutex_unlock(&data->philo->died_mutex);
 		printf("eat limit\n");
 		return (false);
+	}
+	return (true);
+}
+
+bool	alone_filo(t_data *data)
+{
+	if (data->philo->philo_nbr == 1)
+	{
+		pthread_mutex_lock(data->left_fork);
+		print_msg(data,"has taken a fork\n");
+		pthread_mutex_unlock(data->left_fork);
+		if (!is_simulation_running(data))
+			return (false);
 	}
 	return (true);
 }

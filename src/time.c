@@ -6,11 +6,11 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 15:10:32 by msokolov          #+#    #+#             */
-/*   Updated: 2025/06/17 17:38:04 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/01 15:41:10 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "philo.h"
 
 long long	set_time(void)
 {
