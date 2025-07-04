@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:04:14 by msokolov          #+#    #+#             */
-/*   Updated: 2025/07/01 16:23:22 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:28:17 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ void	*monitoring(void *args)
 				pthread_mutex_lock(&data->philo->died_mutex);
 				data->philo->elimination = true;
 				pthread_mutex_unlock(&data->philo->died_mutex);
-				printf("%lld has died\n", set_time() - data->philo->start_time);
+				pthread_mutex_lock(&data->philo->print_mutex);
+				printf("%lld %d has died\n", set_time() - data->philo->start_time, data[i].id + 1);
+				pthread_mutex_unlock(&data->philo->print_mutex);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data[i].last_meal_m);
@@ -58,10 +60,10 @@ void	*routine(void *args)
 			usleep(1000);
 		deadlock_case(data);
 		print_msg(data,"is eating\n");
-		usleep(data->philo->eat_time * 1000);
 		pthread_mutex_lock(&data->philo->meal_mutex);
 		data->meals_eaten++;
 		pthread_mutex_unlock(&data->philo->meal_mutex);
+		usleep(data->philo->eat_time * 1000);
 		pthread_mutex_unlock(data->left_fork);
 		pthread_mutex_unlock(data->right_fork);
 		print_msg(data,"is sleeping\n");
@@ -115,7 +117,7 @@ bool eat_limit(t_data *data)
 		else
 			pthread_mutex_unlock(&data->philo->meal_mutex);
 	}
-	if (counter >= data->philo->philo_nbr && data->philo->meal_limit != -1)
+	if (counter > data->philo->philo_nbr && data->philo->meal_limit != -1)
 	{
 		pthread_mutex_lock(&data->philo->died_mutex);
 		data->philo->elimination = true;

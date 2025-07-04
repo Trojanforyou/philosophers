@@ -3,7 +3,7 @@ CC = gcc
 SRCS_DIR = src
 OBJS_DIR = obj
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g03 -I.
+CFLAGS = -Wall -Wextra -Werror -I.
 HEADER = philo.h
 
 SRCS = src/main.c src/parse.c src/utils.c src/threads.c src/time.c
@@ -16,9 +16,6 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(OBJS_DIR)

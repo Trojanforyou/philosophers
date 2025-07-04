@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 17:35:52 by msokolov          #+#    #+#             */
-/*   Updated: 2025/07/01 15:41:18 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:27:40 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,14 @@ bool	philo_args(t_philo *info, int ac, char **av)
 		info->meal_limit = -1;
 	if (info->philo_nbr > 200)
 		return(printf(RED"To Much Philos\n" RESET), false);
-	if (info->philo_nbr <= 0 ||info->die_time <= 0|| info->eat_time <= 0|| info->sleep_time <= 0)
+	if (info->philo_nbr <= 0 || info->die_time <= 0|| info->eat_time <= 0 || info->sleep_time <= 0)
 		return (false);
 	info->elimination = false;
 	if (pthread_mutex_init(&info->died_mutex, NULL))
 		return (false);
 	if (pthread_mutex_init(&info->meal_mutex, NULL))
+		return (false);
+	if (pthread_mutex_init(&info->print_mutex, NULL))
 		return (false);
 	if (ac == 6 && info->meal_limit <= 0)
 		return (false);

@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 17:40:04 by msokolov          #+#    #+#             */
-/*   Updated: 2025/07/01 15:34:56 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:27:36 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_philo
 	long			meal_limit;
 	long			start_time;
 	pthread_t		meal_limit_t;
+	pthread_mutex_t print_mutex;
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t died_mutex;
 	pthread_t		died;

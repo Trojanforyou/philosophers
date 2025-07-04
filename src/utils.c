@@ -61,9 +61,11 @@ bool is_simulation_running(t_data *data)
 }
 
 void	print_msg(t_data *data, char *msg)
-{
+{	
+	pthread_mutex_lock(&data->philo->print_mutex);
 	if (is_simulation_running(data))
 		printf("%lld %d %s", set_time() - data->philo->start_time, data->id + 1, msg);
+	pthread_mutex_unlock(&data->philo->print_mutex);
 }
 
 void destroy_all(t_data *data, t_philo *info)
@@ -78,9 +80,9 @@ void destroy_all(t_data *data, t_philo *info)
 		}
 		free(info->forks);
 	}
-	// if (&info->died_mutex)
-	// 	pthread_mutex_destroy(&info->died_mutex);
-	// if (&data->last_meal_m)
-	// 	pthread_mutex_destroy(&data->last_meal_m);
+		pthread_mutex_destroy(&info->died_mutex);
+		pthread_mutex_destroy(&data->last_meal_m);
+		pthread_mutex_destroy(&info->meal_mutex);
+		pthread_mutex_destroy(&info->print_mutex);
 	free(data);
 }
