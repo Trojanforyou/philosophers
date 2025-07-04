@@ -6,7 +6,7 @@
 /*   By: msokolov <msokolov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:04:14 by msokolov          #+#    #+#             */
-/*   Updated: 2025/07/04 15:28:17 by msokolov         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:56:18 by msokolov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,8 @@ void	*monitoring(void *args)
 		i = -1;
 		while (++i < data->philo->philo_nbr)
 		{
-			pthread_mutex_lock(&data[i].last_meal_m);
-			if (set_time() - data[i].last_meal > data->philo->die_time)
-			{
-				pthread_mutex_unlock(&data[i].last_meal_m);
-				pthread_mutex_lock(&data->philo->died_mutex);
-				data->philo->elimination = true;
-				pthread_mutex_unlock(&data->philo->died_mutex);
-				pthread_mutex_lock(&data->philo->print_mutex);
-				printf("%lld %d has died\n", set_time() - data->philo->start_time, data[i].id + 1);
-				pthread_mutex_unlock(&data->philo->print_mutex);
-				return (NULL);
-			}
-			pthread_mutex_unlock(&data[i].last_meal_m);
+			if (!died(data))
+				return (0);
 			if (!eat_limit(data))
 				return (0);
 		}
@@ -43,30 +32,28 @@ void	*monitoring(void *args)
 	}
 }
 
-
-// Основной цикл рутины.
 void	*routine(void *args)
 {
-	t_data *data;
+	t_data	*data;
 
 	data = (t_data *)args;
 	usleep((data->id % 2) * (data->philo->eat_time * 1000));
 	while (is_simulation_running(data))
 	{
-		print_msg(data,"is thinking\n");
-		if (data->philo->philo_nbr == 1 && is_simulation_running(data))
-			return (0);
+		print_msg(data, "is thinking\n");
+		if (data->philo->philo_nbr == 1)
+			return (alone_filo(data), NULL);
 		if (data->philo->philo_nbr % 2 == 1)
 			usleep(1000);
 		deadlock_case(data);
-		print_msg(data,"is eating\n");
+		print_msg(data, "is eating\n");
 		pthread_mutex_lock(&data->philo->meal_mutex);
 		data->meals_eaten++;
 		pthread_mutex_unlock(&data->philo->meal_mutex);
 		usleep(data->philo->eat_time * 1000);
 		pthread_mutex_unlock(data->left_fork);
 		pthread_mutex_unlock(data->right_fork);
-		print_msg(data,"is sleeping\n");
+		print_msg(data, "is sleeping\n");
 		usleep(data->philo->sleep_time * 1000);
 	}
 	return (0);
@@ -88,6 +75,8 @@ bool	thread_init(t_data *data, t_philo *info)
 		data[i].last_meal = info->start_time;
 		data[i].left_fork = &info->forks[i];
 		data[i].right_fork = &info->forks[(i + 1) % info->philo_nbr];
+		if (!data[i].right_fork || !data[i].left_fork)
+			return (destroy_all(data, info), 0);
 		if (pthread_mutex_init(&data[i].last_meal_m, NULL))
 			return (false);
 		if (pthread_create(&data[i].thread, NULL, routine, &data[i]) != 0)
@@ -99,9 +88,9 @@ bool	thread_init(t_data *data, t_philo *info)
 	return (true);
 }
 
-bool eat_limit(t_data *data)
+bool	eat_limit(t_data *data)
 {
-	int counter;
+	int	counter;
 	int	i;
 
 	counter = 1;
@@ -128,15 +117,9 @@ bool eat_limit(t_data *data)
 	return (true);
 }
 
-bool	alone_filo(t_data *data)
+void	alone_filo(t_data *data)
 {
-	if (data->philo->philo_nbr == 1)
-	{
-		pthread_mutex_lock(data->left_fork);
-		print_msg(data,"has taken a fork\n");
-		pthread_mutex_unlock(data->left_fork);
-		if (!is_simulation_running(data))
-			return (false);
-	}
-	return (true);
+	pthread_mutex_lock(data->left_fork);
+	print_msg(data, "has taken a fork\n");
+	pthread_mutex_unlock(data->left_fork);
 }
